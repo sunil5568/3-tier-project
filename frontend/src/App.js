@@ -6,7 +6,7 @@ function App() {
 
   const loadTasks = async () => {
     try {
-      const res = await fetch("http://localhost:5000/tasks");
+      const res = await fetch("http://34.207.116.249:5000/tasks");
       const data = await res.json();
       setTasks(data);
     } catch (err) {
@@ -21,7 +21,7 @@ function App() {
   const handleAdd = async () => {
     if (!task) return;
 
-    await fetch("http://localhost:5000/tasks", {
+    await fetch("http://34.207.116.249:5000/tasks", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -34,7 +34,7 @@ function App() {
   };
 
   const handleDelete = async (id) => {
-    await fetch(`http://localhost:5000/tasks/${id}`, {
+    await fetch(`http://34.207.116.249:5000/tasks/${id}`, {
       method: "DELETE",
     });
 
