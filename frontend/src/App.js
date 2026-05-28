@@ -6,7 +6,7 @@ function App() {
 
   const loadTasks = async () => {
     try {
-      const res = await fetch("http://34.207.116.249:5000/tasks");
+      const res = await fetch("/api/tasks");
       const data = await res.json();
       setTasks(data);
     } catch (err) {
