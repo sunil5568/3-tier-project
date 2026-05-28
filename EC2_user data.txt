@@ -1,0 +1,66 @@
+#!/bin/bash
+
+set -e
+
+# Update system
+apt-get update -y
+apt-get upgrade -y
+
+# Install basic dependencies
+apt-get install -y \
+    curl \
+    unzip \
+    apt-transport-https \
+    ca-certificates \
+    software-properties-common
+
+# Install Git
+apt-get install -y git
+
+# Install Python3 and pip
+apt-get install -y python3 python3-pip
+
+# Install AWS CLI v2
+cd /tmp
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+./aws/install
+
+# Install Docker
+apt-get remove -y docker docker-engine docker.io containerd runc || true
+
+mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+apt-get update -y
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+# Enable and start Docker
+systemctl enable docker
+systemctl start docker
+
+# Allow ubuntu user to run docker without sudo
+usermod -aG docker ubuntu
+
+# Install kubectl (optional but recommended for Kind)
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+# Install Kind (Kubernetes in Docker)
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/latest/kind-linux-amd64
+chmod +x ./kind
+mv ./kind /usr/local/bin/kind
+
+# Verify installations (logs will go to cloud-init output)
+git --version
+docker --version
+kind --version
+aws --version
+python3 --version
+kubectl version --client
+
+echo "All tools installed successfully!"
