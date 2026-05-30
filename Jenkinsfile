@@ -2,8 +2,9 @@ pipeline {
     agent any
 
     environment {
-        FRONTEND_IMAGE = "task-frontend"
-        BACKEND_IMAGE = "task-backend"
+        DOCKER_REPO = "sunil2211"
+        FRONTEND_IMAGE = "${DOCKER_REPO}/task-frontend"
+        BACKEND_IMAGE = "${DOCKER_REPO}/task-backend"
     }
 
     stages {
@@ -15,35 +16,37 @@ pipeline {
             }
         }
 
-        stage('Verify Files') {
-            steps {
-                sh '''
-                echo "Project files:"
-                ls -la
-                '''
-            }
-        }
-
         stage('Build Backend Image') {
             steps {
-                sh '''
-                docker build -t $BACKEND_IMAGE ./backend
-                '''
+                sh 'docker build -t $BACKEND_IMAGE:latest ./backend'
             }
         }
 
         stage('Build Frontend Image') {
             steps {
-                sh '''
-                docker build -t $FRONTEND_IMAGE ./frontend
-                '''
+                sh 'docker build -t $FRONTEND_IMAGE:latest ./frontend'
             }
         }
 
-        stage('Verify Docker Images') {
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-secret',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    '''
+                }
+            }
+        }
+
+        stage('Push Images') {
             steps {
                 sh '''
-                docker images
+                    docker push $BACKEND_IMAGE:latest
+                    docker push $FRONTEND_IMAGE:latest
                 '''
             }
         }
@@ -51,11 +54,11 @@ pipeline {
 
     post {
         success {
-            echo 'Build completed successfully!'
+            echo 'Images pushed successfully'
         }
 
         failure {
-            echo 'Build failed!'
+            echo 'Pipeline failed'
         }
     }
 }
