@@ -56,7 +56,7 @@ pipeline {
             steps {
                 sshagent(['deploy-server-key']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ubuntu@${DEPLOYMENT_SERVER_IP} << 'EOF'
+                        ssh ubuntu@${DEPLOYMENT_SERVER_IP} << 'EOF'
                         # Navigate to your project directory on the remote server
                         cd ~/3-tier-project
                         git pull origin main
