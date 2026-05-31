@@ -62,7 +62,7 @@ pipeline {
                     # Check if the Kind cluster 'kind' already exists
                     if ! kind get clusters | grep -q "^kind\$"; then
                         echo "Kind cluster not found. Creating cluster using config file..."
-                        kind create cluster --config k8s/kind-config.yaml
+                        kind create cluster --config kind-config.yaml
                     else
                         echo "Kind cluster is already running."
                     fi
