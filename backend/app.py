@@ -45,8 +45,8 @@ def init_db():
     print("✅ Table initialized")
 
 # 🔷 Run init
-wait_for_db()
-init_db()
+# wait_for_db()
+# init_db()
 
 # 🔷 GET all tasks
 @app.route("/tasks", methods=["GET"])

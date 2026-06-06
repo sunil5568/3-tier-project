@@ -16,5 +16,6 @@ spec:
       containers:
       - name: backend
         image: sunil2211/task-backend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000
