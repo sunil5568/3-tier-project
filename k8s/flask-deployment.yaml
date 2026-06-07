@@ -25,7 +25,7 @@ spec:
 
       - name: flask
 
-        image: sunil2211/task-manager:latest
+        image: sunil2211/task-manager:5
 
         ports:
         - containerPort: 5000
