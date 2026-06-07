@@ -48,6 +48,28 @@ pipeline {
                 '''
             }
         }
+        stage('Docker Login') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-secret',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    '''
+                }
+            }
+        }
+
+        stage('Push Images') {
+            steps {
+                sh '''
+                    docker push sunil2211/task-manager:${BUILD_NUMBER}
+                '''
+            }
+        }
+
     }
 
     post {
