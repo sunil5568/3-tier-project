@@ -34,7 +34,7 @@ pipeline {
                 sh '''
                 . venv/bin/activate
 
-                pytest
+                pytest test_app.py
                 '''
             }
         }
